@@ -1,15 +1,13 @@
-package com.notes.service.spec;
+package com.notes.service.services;
 
 import com.notes.dao.entites.Folder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
+import com.notes.dao.models.FolderModel;
+import com.notes.dao.models.PageModel;
 
 public interface FolderService {
-    Page<Folder> getAllFolders(Pageable pageable);
+    PageModel<Folder> getAllFolders(int page, int size);
     Folder getFolderById(Long id);
-    Folder createFolder(Folder folder);
-    Folder updateFolder(Long id, Folder folder);
+    FolderModel createFolder(FolderModel folderModel);
+    FolderModel updateFolder(Long id, FolderModel folderModel);
     void deleteFolder(Long id);
 }

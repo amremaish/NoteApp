@@ -1,5 +1,8 @@
 package com.notes.dao.entites;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.notes.dao.models.FolderModel;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -9,10 +12,10 @@ public class Folder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
-    @NotNull(message = "user_id name must not be empty")
+    @NotNull(message = "user_id must not be empty")
     @JoinColumn(name = "user_id")
     private User user;
     @NotNull(message = "Folder name must not be empty")
@@ -20,14 +23,14 @@ public class Folder {
 
     private boolean isPublic = false;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
-
+    @JsonIgnore
     public User getUser() {
         return user;
     }

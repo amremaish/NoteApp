@@ -3,7 +3,7 @@ package com.notes.error;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.OK)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class CustomException extends RuntimeException {
 
 	public CustomException(String msg) {

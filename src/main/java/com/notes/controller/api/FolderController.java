@@ -1,6 +1,8 @@
 package com.notes.controller.api;
 import com.notes.dao.entites.Folder;
-import com.notes.service.spec.FolderService;
+import com.notes.dao.models.FolderModel;
+import com.notes.dao.models.PageModel;
+import com.notes.service.services.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +22,12 @@ public class FolderController {
 
     // GET all folders
     @GetMapping
-    public ResponseEntity<List<Folder>> getAllFolders(Pageable pageable) {
-        Page<Folder> folders = folderService.getAllFolders(pageable);
-        List<Folder> folderList = folders.getContent();
-        return ResponseEntity.ok().body(folderList);
+    public ResponseEntity<PageModel<Folder>> getAllFolders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageModel<Folder> folders = folderService.getAllFolders(page, size);
+        return ResponseEntity.ok().body(folders);
     }
 
     // GET folder by ID
@@ -39,20 +43,16 @@ public class FolderController {
 
     // POST create a new folder
     @PutMapping("/create")
-    public ResponseEntity<Folder> createFolder(@Valid @RequestBody Folder folder) {
-        Folder createdFolder = folderService.createFolder(folder);
+    public ResponseEntity<Object> createFolder(@Valid @RequestBody FolderModel folderModel) {
+        FolderModel createdFolder = folderService.createFolder(folderModel);
         return new ResponseEntity<>(createdFolder, HttpStatus.CREATED);
     }
 
     // PUT update an existing folder
     @PostMapping("/{id}/edit")
-    public ResponseEntity<Folder> updateFolder(@PathVariable Long id, @RequestBody Folder folder) {
-        Folder updatedFolder = folderService.updateFolder(id, folder);
-        if (updatedFolder != null) {
-            return new ResponseEntity<>(updatedFolder, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Object> updateFolder(@PathVariable Long id, @RequestBody FolderModel folderModel) {
+       FolderModel updatedFolder = folderService.updateFolder(id, folderModel);
+        return new ResponseEntity<>(updatedFolder, HttpStatus.OK);
     }
 
     // DELETE delete a folder by ID

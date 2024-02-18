@@ -1,46 +1,79 @@
 package com.notes.service.impl;
+
 import com.notes.dao.entites.Folder;
+import com.notes.dao.entites.User;
+import com.notes.dao.models.FolderModel;
+import com.notes.dao.models.PageModel;
 import com.notes.dao.repo.FolderRepo;
-import com.notes.service.spec.FolderService;
+import com.notes.dao.repo.UserRepo;
+import com.notes.error.CustomException;
+import com.notes.service.services.AuthService;
+import com.notes.service.services.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 
 @Service
 public class FolderServiceImpl implements FolderService {
 
     @Autowired
-    private FolderRepo folderRepository; // Assuming you have a FolderRepository
+    private FolderRepo folderRepo;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private AuthService authService;
 
     @Override
-    public Page<Folder> getAllFolders(Pageable pageable) {
-        return folderRepository.findAll(pageable);
+    public PageModel<Folder> getAllFolders(int page, int size) {
+        long current_user = authService.getCurrentUser().getId();
+        return new PageModel<>(folderRepo.findByUserId(current_user, PageRequest.of(page, size)));
     }
 
     @Override
     public Folder getFolderById(Long id) {
-        return folderRepository.findById(id).orElse(null);
+        return folderRepo.findById(id).orElse(null);
     }
 
     @Override
-    public Folder createFolder(Folder folder) {
-        return folderRepository.save(folder);
-    }
-
-    @Override
-    public Folder updateFolder(Long id, Folder folder) {
-        if (folderRepository.existsById(id)) {
-            folder.setId(id);
-            return folderRepository.save(folder);
-        } else {
-            return null;
+    public FolderModel createFolder(FolderModel folderModel) {
+        long current_user = authService.getCurrentUser().getId();
+        User user = userRepo.findById(current_user).orElseThrow(() -> new CustomException("User is not found"));
+        Folder folderExisted = folderRepo.findFirstByFolderNameAndUserId(folderModel.getFolderName(), user.getId());
+        if (folderExisted != null) {
+            throw new CustomException("Folder exists with the same name");
         }
+        Folder folder = new Folder();
+        folder.setFolderName(folderModel.getFolderName());
+        folder.setPublic(folderModel.isPublic());
+        folder.setUser(user);
+        return new FolderModel(folderRepo.save(folder));
+    }
+
+    @Override
+    public FolderModel updateFolder(Long id, FolderModel folderModel) {
+        long current_user = authService.getCurrentUser().getId();
+        Folder oldFolder = folderRepo.findById(id).orElseThrow(() -> new CustomException("Folder is not found"));
+        if (oldFolder.getUser().getId() != current_user) {
+            throw new CustomException("You don't have access to this folder");
+        }
+        User user = userRepo.findById(current_user).orElseThrow(() -> new CustomException("User is not found"));
+        Folder folderExisted = folderRepo.findFirstByFolderNameAndUserIdAndIdNot(folderModel.getFolderName(), user.getId(), id);
+        if (folderExisted != null) {
+            throw new CustomException("Folder exists with the same name");
+        }
+        oldFolder.setFolderName(folderModel.getFolderName());
+        oldFolder.setPublic(folderModel.isPublic());
+        return new FolderModel(folderRepo.save(oldFolder));
     }
 
     @Override
     public void deleteFolder(Long id) {
-        folderRepository.deleteById(id);
+        long current_user = authService.getCurrentUser().getId();
+        Folder oldFolder = folderRepo.findById(id).orElseThrow(() -> new CustomException("Folder is not found"));
+        if (oldFolder.getUser().getId() != current_user) {
+            throw new CustomException("You don't have access to this folder");
+        }
+        folderRepo.deleteById(id);
     }
 }

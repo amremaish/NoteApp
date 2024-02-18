@@ -38,7 +38,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     public User getCurrentUser() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepo.findById(Long.parseLong(userDetails.getUsername())).orElse(null);
+        return userRepo.findByPhoneNumber(userDetails.getUsername()).orElse(null);
     }
 
     public Object register(User user) {
