@@ -10,12 +10,14 @@ import java.util.Collection;
 
 public class MyUserDetails implements UserDetails {
 
-	private long id;
+	private String phoneNumber;
 	private String password;
+	private long id;
 
 	public MyUserDetails(User user) {
-		this.id = user.getId();
+		this.phoneNumber = user.getPhoneNumber();
 		this.password = user.getPassword();
+		this.id = user.getId();
 	}
 
 
@@ -31,7 +33,7 @@ public class MyUserDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return this.id + "";
+		return this.phoneNumber;
 	}
 
 	@Override
@@ -52,5 +54,13 @@ public class MyUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }

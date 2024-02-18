@@ -9,6 +9,7 @@ import com.notes.security.MyUserDetails;
 import com.notes.service.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,10 +30,15 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        Optional<User> user = userRepo.findById(Long.parseLong(id));
+    public MyUserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
+        Optional<User> user = userRepo.findByPhoneNumber(phoneNumber);
         user.orElseThrow(() -> new CustomException("The request is rejected because the credentials are invalid"));
         return user.map(MyUserDetails::new).get();
+    }
+
+    public User getCurrentUser() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepo.findById(Long.parseLong(userDetails.getUsername())).orElse(null);
     }
 
     public Object register(User user) {

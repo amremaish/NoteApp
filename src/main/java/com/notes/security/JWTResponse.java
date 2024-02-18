@@ -5,13 +5,14 @@ public class JWTResponse {
 	private String token;
 	private String phoneNumber;
 
-
+	private long id;
 	private String status;
 
-	public JWTResponse(String token, String phoneNumber, String status) {
+	public JWTResponse(String token, long id, String phoneNumber, String status) {
 		this.status = status;
 		this.token = token;
 		this.phoneNumber = phoneNumber;
+		this.id = id;
 	}
 
 	public JWTResponse() {
@@ -42,5 +43,11 @@ public class JWTResponse {
 		this.status = status;
 	}
 
+	public long getId() {
+		return id;
+	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
 }

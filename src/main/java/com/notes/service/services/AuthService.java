@@ -9,5 +9,7 @@ public interface AuthService {
 
     public UserDetails loadUserByUsername(String email);
 
+    public User getCurrentUser();
+
     public Object register(User user);
 }

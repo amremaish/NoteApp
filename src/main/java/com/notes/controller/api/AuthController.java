@@ -4,6 +4,7 @@ import com.notes.dao.entites.User;
 import com.notes.dao.models.LoginRequest;
 import com.notes.error.CustomException;
 import com.notes.error.CustomResponse;
+import com.notes.security.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,9 +50,9 @@ public class AuthController {
 
         if (authentication.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            UserDetails userDetails = userService.loadUserByUsername(loginRequest.getPhoneNumber());
+            MyUserDetails userDetails = userService.loadUserByUsername(loginRequest.getPhoneNumber());
             String token = tokenUtils.generateToken(userDetails);
-            return new CustomResponse(new JWTResponse(token, loginRequest.getPhoneNumber(), "Successfully logged"));
+            return new CustomResponse(new JWTResponse(token, userDetails.getId(), loginRequest.getPhoneNumber(), "Successfully logged"));
         }
 
         return new CustomResponse("The request is rejected because the credentials are invalid", HttpStatus.BAD_REQUEST.value());
