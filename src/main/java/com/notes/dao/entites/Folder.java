@@ -12,6 +12,7 @@ public class Folder {
     private Long id;
 
     @ManyToOne
+    @NotNull(message = "user_id name must not be empty")
     @JoinColumn(name = "user_id")
     private User user;
     @NotNull(message = "Folder name must not be empty")

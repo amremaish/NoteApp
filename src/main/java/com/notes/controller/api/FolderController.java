@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -36,14 +38,14 @@ public class FolderController {
     }
 
     // POST create a new folder
-    @PostMapping
-    public ResponseEntity<Folder> createFolder(@RequestBody Folder folder) {
+    @PutMapping("/create")
+    public ResponseEntity<Folder> createFolder(@Valid @RequestBody Folder folder) {
         Folder createdFolder = folderService.createFolder(folder);
         return new ResponseEntity<>(createdFolder, HttpStatus.CREATED);
     }
 
     // PUT update an existing folder
-    @PutMapping("/{id}")
+    @PostMapping("/{id}/edit")
     public ResponseEntity<Folder> updateFolder(@PathVariable Long id, @RequestBody Folder folder) {
         Folder updatedFolder = folderService.updateFolder(id, folder);
         if (updatedFolder != null) {
