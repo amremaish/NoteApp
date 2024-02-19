@@ -1,10 +1,9 @@
 package com.notes.controller.api;
 
 import com.notes.dao.entites.Item;
-import com.notes.dao.models.FolderModel;
 import com.notes.dao.models.ItemModel;
 import com.notes.dao.models.PageModel;
-import com.notes.service.services.ItemService;
+import com.notes.service.interfaces.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

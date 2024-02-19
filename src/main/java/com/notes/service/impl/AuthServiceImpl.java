@@ -6,7 +6,7 @@ import com.notes.dao.entites.User;
 import com.notes.dao.repo.UserRepo;
 import com.notes.error.CustomException;
 import com.notes.security.MyUserDetails;
-import com.notes.service.services.AuthService;
+import com.notes.service.interfaces.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;

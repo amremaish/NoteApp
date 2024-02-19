@@ -1,4 +1,4 @@
-package com.notes.service.services;
+package com.notes.service.interfaces;
 
 import com.notes.dao.entites.Item;
 import com.notes.dao.models.ItemModel;

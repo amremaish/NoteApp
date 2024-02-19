@@ -2,7 +2,7 @@ package com.notes.controller.api;
 import com.notes.dao.entites.Folder;
 import com.notes.dao.models.FolderModel;
 import com.notes.dao.models.PageModel;
-import com.notes.service.services.FolderService;
+import com.notes.service.interfaces.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

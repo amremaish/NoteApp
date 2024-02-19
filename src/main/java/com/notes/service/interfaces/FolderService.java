@@ -1,4 +1,4 @@
-package com.notes.service.services;
+package com.notes.service.interfaces;
 
 import com.notes.dao.entites.Folder;
 import com.notes.dao.models.FolderModel;

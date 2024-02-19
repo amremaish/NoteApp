@@ -1,4 +1,4 @@
-package com.notes.service.services;
+package com.notes.service.interfaces;
 
 import com.notes.dao.entites.User;
 import org.springframework.security.core.userdetails.UserDetails;
