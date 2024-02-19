@@ -9,6 +9,7 @@ import com.notes.dao.repo.UserRepo;
 import com.notes.error.CustomException;
 import com.notes.service.services.AuthService;
 import com.notes.service.services.FolderService;
+import com.notes.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public Folder getFolderById(Long id) {
-        return folderRepo.findById(id).orElse(null);
+        return folderRepo.findById(id).orElseThrow(() -> new CustomException("Folder is not found"));
     }
 
     @Override
@@ -42,6 +43,9 @@ public class FolderServiceImpl implements FolderService {
         Folder folderExisted = folderRepo.findFirstByFolderNameAndUserId(folderModel.getFolderName(), user.getId());
         if (folderExisted != null) {
             throw new CustomException("Folder exists with the same name");
+        }
+        if (!Validator.isValidFolderName(folderModel.getFolderName())){
+            throw new CustomException("Folder name is invalid.");
         }
         Folder folder = new Folder();
         folder.setFolderName(folderModel.getFolderName());
@@ -61,6 +65,9 @@ public class FolderServiceImpl implements FolderService {
         Folder folderExisted = folderRepo.findFirstByFolderNameAndUserIdAndIdNot(folderModel.getFolderName(), user.getId(), id);
         if (folderExisted != null) {
             throw new CustomException("Folder exists with the same name");
+        }
+        if (!Validator.isValidFolderName(folderModel.getFolderName())){
+            throw new CustomException("Folder name is invalid.");
         }
         oldFolder.setFolderName(folderModel.getFolderName());
         oldFolder.setPublic(folderModel.isPublic());

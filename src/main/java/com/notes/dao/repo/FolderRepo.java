@@ -17,4 +17,5 @@ public interface FolderRepo extends JpaRepository<Folder, Long> {
     Folder findFirstByFolderNameAndUserIdAndIdNot(String folderName, Long userId, Long id);
     Page<Folder> findByUserId(long userId, Pageable pageable);
 
+
 }

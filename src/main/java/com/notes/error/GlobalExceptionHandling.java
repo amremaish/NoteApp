@@ -6,40 +6,43 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
-public class GlobalExceptionHandling extends ResponseEntityExceptionHandler {
-
+public class GlobalExceptionHandling  {
+	@ExceptionHandler(BindException.class)
+	@ResponseBody
+	public ResponseEntity<ErrorResponse> handleBindException(BindException ex, HttpServletRequest request, HttpServletResponse response) {
+		List<String> details = new ArrayList<>();
+		details.add(ex.getLocalizedMessage());
+		ErrorResponse error = new ErrorResponse("Server Error", HttpStatus.BAD_REQUEST.value(), details);
+		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+	}
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
 		List<String> details = new ArrayList<>();
 		details.add(ex.getLocalizedMessage());
-		ErrorResponse error = new ErrorResponse("Server Error", HttpStatus.NOT_FOUND.value(), details);
-		return new ResponseEntity(error, HttpStatus.OK);
+		ErrorResponse error = new ErrorResponse("Server Error", HttpStatus.BAD_REQUEST.value(), details);
+		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(CustomException.class)
 	public final ResponseEntity<Object> handleUserNotFoundException(CustomException ex, WebRequest request) {
 		List<String> details = new ArrayList<>();
 		details.add(ex.getLocalizedMessage());
-		ErrorResponse error = new ErrorResponse("Server Exception", HttpStatus.NOT_FOUND.value(), details);
-		return new ResponseEntity(error, HttpStatus.OK);
+		ErrorResponse error = new ErrorResponse("Server Exception", HttpStatus.BAD_REQUEST.value(), details);
+		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
 	}
 
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		List<String> details = new ArrayList<>();
-		for (ObjectError error : ex.getBindingResult().getAllErrors()) {
-			details.add(error.getDefaultMessage());
-		}
-		ErrorResponse error = new ErrorResponse("Server Exception", HttpStatus.NOT_FOUND.value(), details);
-		return new ResponseEntity(error, HttpStatus.OK);
-	}
+
 }

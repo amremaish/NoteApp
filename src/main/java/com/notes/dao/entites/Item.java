@@ -1,5 +1,7 @@
 package com.notes.dao.entites;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,14 +15,22 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder folder;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
-    private String stringContent;
+    private String content;
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
 
-    @Lob
-    private byte[] blobContent;
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -29,7 +39,7 @@ public class Item {
     public void setId(Long id) {
         this.id = id;
     }
-
+    @JsonIgnore
     public Folder getFolder() {
         return folder;
     }
@@ -46,19 +56,11 @@ public class Item {
         this.itemType = itemType;
     }
 
-    public String getStringContent() {
-        return stringContent;
+    public String getContent() {
+        return content;
     }
 
-    public void setStringContent(String stringContent) {
-        this.stringContent = stringContent;
-    }
-
-    public byte[] getBlobContent() {
-        return blobContent;
-    }
-
-    public void setBlobContent(byte[] blobContent) {
-        this.blobContent = blobContent;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

@@ -41,6 +41,11 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
         return userRepo.findByPhoneNumber(userDetails.getUsername()).orElse(null);
     }
 
+    @Override
+    public User getFindUserById(long id) {
+        return userRepo.findById(id).orElseThrow(() -> new CustomException("User is not found"));
+    }
+
     public Object register(User user) {
         user.setPassword(getEncoder().encode(user.getPassword()));
         userRepo.save(user);

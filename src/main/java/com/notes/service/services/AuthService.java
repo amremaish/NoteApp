@@ -10,6 +10,7 @@ public interface AuthService {
     public UserDetails loadUserByUsername(String email);
 
     public User getCurrentUser();
+    public User getFindUserById(long id);
 
     public Object register(User user);
 }
