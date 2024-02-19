@@ -1,10 +1,18 @@
 package com.notes.util;
 
 import com.notes.error.CustomException;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -51,9 +59,9 @@ public class ImageUploader {
         return fileName;
     }
 
-    public static void removeImage( long userId, String folderName, String fileName) {
+    public static void removeImage(long userId, String folderName, String fileName) {
         try {
-            String uploadDir = RESOURCES_DIR + "/" + userId + "/" + folderName ;
+            String uploadDir = RESOURCES_DIR + "/" + userId + "/" + folderName;
             Path imagePath = Paths.get(uploadDir).resolve(fileName);
 
             // Check if the file exists
@@ -65,6 +73,46 @@ public class ImageUploader {
             }
         } catch (IOException ex) {
             throw new CustomException("Failed to remove image: " + ex.getMessage());
+        }
+    }
+
+    public static ResponseEntity<Object> fetchImage(long userId, String folderName, String fileName) {
+        // Load the image file
+        String uploadDir = RESOURCES_DIR + "/" + userId + "/" + folderName;
+        Path imagePath = Paths.get(uploadDir).resolve(fileName);
+
+        File file = new File(String.valueOf(imagePath));
+        if (!file.exists()) {
+            throw new CustomException("Image not found in the " + folderName + " folder.");
+        }
+
+        // Create InputStreamResource from the image file
+        InputStreamResource resource = null;
+        try {
+            resource = new InputStreamResource(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new CustomException("Image not found in the " + folderName + " folder.");
+        }
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(determineContentType(fileName));
+        headers.setContentLength(file.length());
+        headers.setContentDispositionFormData("attachment", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(resource);
+    }
+
+    private static MediaType determineContentType(String imageName) {
+        String fileExtension = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
+        if ("jpg".equals(fileExtension) || "jpeg".equals(fileExtension)) {
+            return MediaType.IMAGE_JPEG;
+        } else if ("png".equals(fileExtension)) {
+            return MediaType.IMAGE_PNG;
+        } else {
+            return MediaType.IMAGE_JPEG;
         }
     }
 }

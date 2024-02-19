@@ -14,8 +14,12 @@ import com.notes.service.interfaces.ItemService;
 import com.notes.util.ImageUploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -36,7 +40,26 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item getItemById(Long id) {
-        return null;
+        return itemRepo.findById(id).orElseThrow(()->new CustomException("Item is not found"));
+    }
+
+    @Override
+    public Object getContent(Long id) {
+        Item item = getItemById(id);
+        Folder folder = folderService.getFolderById(item.getFolder().getId());
+        User curUser = authService.getCurrentUser();
+        if (
+            !folder.isPublic() &&
+            curUser.getId() != item.getUser().getId() &&
+            curUser.getId() != folder.getUser().getId()
+        ) {
+            throw new CustomException("You don't have permission to do this action");
+        }
+        if (item.getItemType() == ItemType.IMAGE){
+            return ImageUploader.fetchImage(item.getUser().getId(), folder.getFolderName() , item.getContent());
+        } else {
+            return new ResponseEntity<>(item.getContent(), HttpStatus.OK);
+        }
     }
 
     @Override

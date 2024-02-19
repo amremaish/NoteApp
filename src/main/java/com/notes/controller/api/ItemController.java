@@ -36,6 +36,10 @@ public class ItemController {
         Item item = itemService.getItemById(id);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
+    @GetMapping("/{item_id}/content")
+    public Object getContent(@PathVariable long item_id) {
+        return itemService.getContent(item_id);
+    }
 
     // PUT create a new folder
     @PutMapping("/{folder_id}/create")
