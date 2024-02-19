@@ -14,7 +14,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private String[] PRIVATE_ENDPOINTS = { "/api/auth/**" };
+	private String[] PUBLIC_ENDPOINTS = {
+			"/api/auth/**",
+			"/swagger-resources/**",
+			"/swagger-ui.html",
+			"/v2/api-docs",
+			"/webjars/**"
+	};
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -33,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeRequests()
 				// Public endpoints
-				.antMatchers(PRIVATE_ENDPOINTS).permitAll()
+				.antMatchers(PUBLIC_ENDPOINTS).permitAll()
 				// All other requests require authentication
 				.anyRequest().authenticated().and()
 				.exceptionHandling()
@@ -45,7 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	@Bean
 	protected AuthenticationManager authenticationManager() throws Exception {
-		// TODO Auto-generated method stub
 		return super.authenticationManager();
 	}
 
