@@ -23,8 +23,8 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo apiInfo() {
-		return new ApiInfo("Notification REST API", "This is the backend notification APIs provied by spring boot ",
-				"Notification API", "Terms of service",
+		return new ApiInfo("Note App REST API", "This is the backend Note App APIs provided by spring boot ",
+				"Note App API", "Terms of service",
 				new Contact("Amr emaish", "https://www.linkedin.com/in/amr-emaish/", "amr.emaish@gmail.com"), "License of API",
 				"API license URL", Collections.emptyList());
 	}
